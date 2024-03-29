@@ -1,32 +1,5 @@
 package deadlydisasters.listeners.spawners;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Goat;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.Zombie;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-
 import deadlydisasters.entities.CustomEntityType;
 import deadlydisasters.entities.EntityHandler;
 import deadlydisasters.entities.christmasentities.Elf;
@@ -34,9 +7,23 @@ import deadlydisasters.entities.christmasentities.Frosty;
 import deadlydisasters.entities.christmasentities.Grinch;
 import deadlydisasters.entities.easterentities.RampagingGoat;
 import deadlydisasters.general.Main;
-import deadlydisasters.general.SeasonsHandler;
 import deadlydisasters.general.WorldObject;
 import deadlydisasters.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.*;
 
 public class GlobalSpawner implements Listener {
 	
@@ -75,7 +62,7 @@ public class GlobalSpawner implements Listener {
 							customType[0] = CustomEntityType.RAMPAGINGGOAT;
 						}
 					}
-					if (customType[0] == null && spawnChristmas && (plugin.seasonsHandler.isActive ? SeasonsHandler.getSeasonsAPI().getSeason(loc.getWorld()) == me.casperge.realisticseasons.season.Season.WINTER : loc.getBlock().getTemperature() <= 0.15)) {
+					if (customType[0] == null && spawnChristmas && (loc.getBlock().getTemperature() <= 0.15)) {
 						List<Integer> order = new ArrayList<>(Arrays.asList(1,2,3));
 						Collections.shuffle(order);
 						label:

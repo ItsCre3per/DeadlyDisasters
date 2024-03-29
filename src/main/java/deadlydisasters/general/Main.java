@@ -1,20 +1,20 @@
 package deadlydisasters.general;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-
+import deadlydisasters.commands.Disasters;
+import deadlydisasters.commands.TownyDisasters;
+import deadlydisasters.disasters.BlackPlague;
+import deadlydisasters.disasters.Blizzard;
+import deadlydisasters.disasters.Disaster;
+import deadlydisasters.disasters.SandStorm;
+import deadlydisasters.entities.CustomEntityType;
+import deadlydisasters.entities.EntityHandler;
+import deadlydisasters.listeners.*;
+import deadlydisasters.listeners.spawners.GlobalSpawner;
+import deadlydisasters.listeners.unloaders.Loader_ver_14;
+import deadlydisasters.listeners.unloaders.Loader_ver_17;
+import deadlydisasters.utils.ConfigUpdater;
+import deadlydisasters.utils.Metrics;
+import deadlydisasters.utils.Utils;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -28,28 +28,15 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import deadlydisasters.commands.Disasters;
-import deadlydisasters.commands.TownyDisasters;
-import deadlydisasters.disasters.BlackPlague;
-import deadlydisasters.disasters.Blizzard;
-import deadlydisasters.disasters.Disaster;
-import deadlydisasters.disasters.SandStorm;
-import deadlydisasters.entities.CustomEntityType;
-import deadlydisasters.entities.EntityHandler;
-import deadlydisasters.listeners.ArmorListener;
-import deadlydisasters.listeners.CoreListener;
-import deadlydisasters.listeners.CraftingListener;
-import deadlydisasters.listeners.CustomEnchantHandler;
-import deadlydisasters.listeners.CustomEntitiesListener;
-import deadlydisasters.listeners.DeathMessages;
-import deadlydisasters.listeners.EasterEventHandler;
-import deadlydisasters.listeners.TownyListener;
-import deadlydisasters.listeners.spawners.GlobalSpawner;
-import deadlydisasters.listeners.unloaders.Loader_ver_14;
-import deadlydisasters.listeners.unloaders.Loader_ver_17;
-import deadlydisasters.utils.ConfigUpdater;
-import deadlydisasters.utils.Metrics;
-import deadlydisasters.utils.Utils;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class Main extends JavaPlugin {
 	
@@ -64,7 +51,6 @@ public class Main extends JavaPlugin {
 	public String latestVersion;
 	public static ConsoleCommandSender consoleSender;
 	public double mcVersion;
-	public SeasonsHandler seasonsHandler;
 	public CustomEnchantHandler enchantHandler;
 	public FixedMetadataValue fixedData;
 	public ConfigSwapper cfgSwapper;
@@ -124,13 +110,9 @@ public class Main extends JavaPlugin {
 		
 		checkWorldsYaml();
 		
-		seasonsHandler = new SeasonsHandler(this);
-		
 		if (getConfig().contains("general.version") || dataFile.getDouble("data.version") < Double.parseDouble(this.getDescription().getVersion())) {
 			updateConfig();
 			updateWorldsYaml();
-			if (seasonsHandler.isActive)
-				seasonsHandler.updateSeasonsFile();
 			/*if (dataFile.getDouble("data.version") < Double.parseDouble(this.getDescription().getVersion())) {
 				dataFile.set("data.uniqueID", 0);
 				dataFile.set("data.version", this.getDescription().getVersion());
@@ -423,10 +405,10 @@ public class Main extends JavaPlugin {
 	}
 	private net.coreprotect.CoreProtectAPI getCoreProtect() {
 		Plugin plugin = getServer().getPluginManager().getPlugin("CoreProtect");
-		if (plugin == null || !(plugin instanceof net.coreprotect.CoreProtect))
+		if (!(plugin instanceof net.coreprotect.CoreProtect))
 			return null;
 		net.coreprotect.CoreProtectAPI CoreProtect = ((net.coreprotect.CoreProtect) plugin).getAPI();
-		if (CoreProtect.isEnabled() == false)
+		if (!CoreProtect.isEnabled())
 			return null;
 		if (CoreProtect.APIVersion() < 6)
 			return null;

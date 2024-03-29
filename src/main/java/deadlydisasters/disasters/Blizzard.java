@@ -1,41 +1,24 @@
 package deadlydisasters.disasters;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Random;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import deadlydisasters.disasters.events.WeatherDisaster;
+import deadlydisasters.disasters.events.WeatherDisasterEvent;
+import deadlydisasters.general.Main;
+import deadlydisasters.general.WorldObject;
+import deadlydisasters.listeners.DeathMessages;
+import deadlydisasters.utils.RepeatingTask;
+import deadlydisasters.utils.Utils;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
-import deadlydisasters.disasters.events.WeatherDisaster;
-import deadlydisasters.disasters.events.WeatherDisasterEvent;
-import deadlydisasters.general.Main;
-import deadlydisasters.general.SeasonsHandler;
-import deadlydisasters.general.WorldObject;
-import deadlydisasters.listeners.DeathMessages;
-import deadlydisasters.utils.RepeatingTask;
-import deadlydisasters.utils.Utils;
+import java.util.*;
 
 public class Blizzard extends WeatherDisaster {
 	
@@ -45,8 +28,6 @@ public class Blizzard extends WeatherDisaster {
 	private Queue<UUID> entities = new ArrayDeque<>();
 	
 	private Map<UUID,UUID> targets = new HashMap<>();
-	
-	private me.casperge.realisticseasons.api.SeasonsAPI seasons;
 	
 	public Blizzard(int level) {
 		super(level);
@@ -58,11 +39,6 @@ public class Blizzard extends WeatherDisaster {
 		freezeHeight = plugin.getConfig().getInt("blizzard.min_freezing_height");
 		if (damage < 0)
 			damage = 0;
-		seasonsAllowed = plugin.seasonsHandler.isActive;
-		if (seasonsAllowed) {
-			seasons = SeasonsHandler.getSeasonsAPI();
-			minTemp = plugin.seasonsHandler.blizzTemp;
-		}
 		volume = plugin.getConfig().getDouble("blizzard.volume");
 		particleRange = plugin.getConfig().getInt("blizzard.particle_max_distance");
 		particleYRange = plugin.getConfig().getInt("blizzard.particle_Y_range");
@@ -99,9 +75,8 @@ public class Blizzard extends WeatherDisaster {
 					if (entities.contains(all.getUniqueId()) && ((Mob) all).getTarget() == null && Bukkit.getEntity(targets.get(all.getUniqueId())) != null)
 						((Mob) all).setTarget((LivingEntity) Bukkit.getEntity(targets.get(all.getUniqueId())));
 					if (!all.hasMetadata("dd-yeti")
-							&& ((!seasonsAllowed && all.getLocation().getBlock().getTemperature() <= 0.15)
-									|| (seasonsAllowed && all instanceof Player
-											&& seasons.getTemperature((Player) all) <= minTemp))) {
+							&& ((all.getLocation().getBlock().getTemperature() <= 0.15)
+									|| (all instanceof Player && all.getLocation().getBlock().getTemperature() <= 0.15))) {
 						if (Utils.isWeatherDisabled(all.getLocation(), obj))
 							continue;
 						Block b = all.getLocation().getBlock();

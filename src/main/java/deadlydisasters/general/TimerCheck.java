@@ -1,19 +1,8 @@
 package deadlydisasters.general;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
+import deadlydisasters.disasters.*;
+import deadlydisasters.listeners.DeathMessages;
+import deadlydisasters.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,27 +14,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import deadlydisasters.disasters.AcidStorm;
-import deadlydisasters.disasters.BlackPlague;
-import deadlydisasters.disasters.Blizzard;
-import deadlydisasters.disasters.CaveIn;
-import deadlydisasters.disasters.CustomDisaster;
-import deadlydisasters.disasters.Disaster;
-import deadlydisasters.disasters.Earthquake;
-import deadlydisasters.disasters.EndStorm;
-import deadlydisasters.disasters.ExtremeWinds;
-import deadlydisasters.disasters.Geyser;
-import deadlydisasters.disasters.Hurricane;
-import deadlydisasters.disasters.MeteorShower;
-import deadlydisasters.disasters.Purge;
-import deadlydisasters.disasters.SandStorm;
-import deadlydisasters.disasters.Sinkhole;
-import deadlydisasters.disasters.SoulStorm;
-import deadlydisasters.disasters.Supernova;
-import deadlydisasters.disasters.Tornado;
-import deadlydisasters.disasters.Tsunami;
-import deadlydisasters.listeners.DeathMessages;
-import deadlydisasters.utils.Utils;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TimerCheck {
 
@@ -56,8 +27,6 @@ public class TimerCheck {
 	private Random rand;
 	
 	private Set<Biome> oceanBiomes = new HashSet<>();
-	
-	private SeasonsHandler seasonsHandler;
 	private boolean seasonsActive;
 
 	public TimerCheck(Main plugin, FileConfiguration data, Random rand) { //https://pokechu22.github.io/Burger/1.19.html#sounds
@@ -76,12 +45,12 @@ public class TimerCheck {
 				Biome.WARM_OCEAN, Biome.RIVER, Biome.FROZEN_RIVER));
 
 		startTimer(plugin);
-		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+		/*plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 			public void run() {
 				seasonsHandler = plugin.seasonsHandler;
 				seasonsActive = plugin.seasonsHandler.isActive;
 			}
-		}, 2);
+		}, 2); */
 	}
 	public void startTimer(Main plugin) {
 		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
@@ -148,11 +117,7 @@ public class TimerCheck {
 					List<Disaster> options = new ArrayList<>(Arrays.asList(Disaster.values()));
 					options.remove(Disaster.CUSTOM);
 					if (seasonsActive) {
-						me.casperge.realisticseasons.season.Season season = SeasonsHandler.getSeasonsAPI().getSeason(all.getWorld());
 						for (Iterator<Disaster> iterator = options.iterator(); iterator.hasNext();) {
-							Disaster disaster = (Disaster) iterator.next();
-							if (seasonsHandler.seasonMap.containsKey(disaster) && !seasonsHandler.seasonMap.get(disaster).contains(season))
-								iterator.remove();
 						}
 					}
 					for (Iterator<Disaster> iterator = options.iterator(); iterator.hasNext();)

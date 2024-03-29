@@ -1,30 +1,18 @@
 package deadlydisasters.general;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.io.FileUtils;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import deadlydisasters.disasters.Disaster;
-import deadlydisasters.utils.ConfigUpdater;
-import deadlydisasters.utils.Utils;
-
+/**
+ * Formerly used for RealisticSeasons integration,
+ * this class is now unusable because the API requires one to pay for the plugin.
+ * The plugin no longer integrates with RealisticSeasons.
+ */
+@Deprecated
 public class SeasonsHandler {
 	
-	public boolean isActive;
+	/*public boolean isActive;
 	public int blizzTemp;
 	
 	private static me.casperge.realisticseasons.api.SeasonsAPI SeasonsAPI;
 	private Main plugin;
-	
 	private FileConfiguration seasonFile;
 	
 	public Map<Disaster, Set<me.casperge.realisticseasons.season.Season>> seasonMap = new HashMap<>();
@@ -104,5 +92,5 @@ public class SeasonsHandler {
 	}
 	public static me.casperge.realisticseasons.api.SeasonsAPI getSeasonsAPI() {
 		return SeasonsAPI;
-	}
+	}*/
 }
